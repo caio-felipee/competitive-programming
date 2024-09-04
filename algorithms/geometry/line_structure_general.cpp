@@ -21,6 +21,11 @@ struct Line {
         return det == 0 and !(*this == r);
     }
 
+    bool orthogonal(const Line& r) const // Verdadeiro se perpendiculares
+    {
+        return equals(a * r.a + b * r.b, 0);
+    }
+
     bool contains(const Point<T>& P) const
     {
         return equals(a*P.x + b*P.y + c, 0);
