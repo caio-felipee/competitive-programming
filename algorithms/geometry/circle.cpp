@@ -1,13 +1,11 @@
-// Definição da classe Point e da função equals()
+enum PointPosition { IN, ON, OUT };
 
 template <typename T>
 struct Circle {
   Point<T> C;
   T r;
 
-  enum { IN, ON, OUT } PointPosition;
-
-  PointPosition position(const Point& P) const {
+   PointPosition position(const Point<T>& P) const {
     auto d = dist(P, C);
 
     return equals(d, r) ? ON : (d < r ? IN : OUT);
@@ -28,7 +26,14 @@ struct Circle {
     return Circle<T>{Point<T>(x, y), r};
   }
 
-  static std::experimental::optional<Circle> from_3_points(const Point<T>& P,
+  static Circle<T> from_2_points(const Point<T>& P, const Point<T>& Q) {
+    auto x = (P.x + Q.x) / 2;
+    auto y = (P.y + Q.y) / 2;
+
+    return Circle<T>{Point(x, y), distance(P, Q) / 2};
+  }
+
+  static std::optional<Circle> from_3_points(const Point<T>& P,
                                                            const Point<T>& Q,
                                                            const Point<T>& R) {
     auto a = 2 * (Q.x - P.x);
@@ -55,8 +60,7 @@ struct Circle {
   }
 
   // Interseção entre o círculo c e a reta que passa por P e Q
-  template <typename T>
-  std::vector<Point<T>> intersection(const Circle<T>& c, const Point<T>& P,
+  static std::vector<Point<T>> intersection(const Circle<T>& c, const Point<T>& P,
                                      const Point<T>& Q) {
     auto a = pow(Q.x - P.x, 2.0) + pow(Q.y - P.y, 2.0);
     auto b = 2 * ((Q.x - P.x) * (P.x - c.C.x) + (Q.y - P.y) * (P.y - c.C.y));
@@ -70,7 +74,7 @@ struct Circle {
       auto u = -b / (2 * a);
       auto x = P.x + u * (Q.x - P.x);
       auto y = P.y + u * (Q.y - P.y);
-      return {Point{x, y}};
+      return {Point<T>(x, y)};
     }
 
     auto u = (-b + sqrt(D)) / (2 * a);
@@ -78,14 +82,14 @@ struct Circle {
     auto x = P.x + u * (Q.x - P.x);
     auto y = P.y + u * (Q.y - P.y);
 
-    auto P1 = Point{x, y};
+    auto P1 = Point<T>(x, y);
 
     u = (-b - sqrt(D)) / (2 * a);
 
     x = P.x + u * (Q.x - P.x);
     y = P.y + u * (Q.y - P.y);
 
-    auto P2 = Point{x, y};
+    auto P2 = Point<T>(x, y);
 
     return {P1, P2};
   }
