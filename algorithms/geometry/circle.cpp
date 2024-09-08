@@ -11,6 +11,10 @@ struct Circle {
     return equals(d, r) ? ON : (d < r ? IN : OUT);
   }
 
+  bool contains(Point<T> &P) {
+    return distance(C, P) <= r;
+  }
+
   static std::optional<Circle> from_2_points_and_r(const Point<T>& P,
                                                    const Point<T>& Q, T r) {
     double d2 = (P.x - Q.x) * (P.x - Q.x) + (P.y - Q.y) * (P.y - Q.y);
@@ -44,7 +48,7 @@ struct Circle {
     auto det = a * d - b * c;
 
     // Pontos colineares
-    if (equals(det, 0)) return {};
+    if (equals(det, (T)0)) return {};
 
     auto k1 = (Q.x * Q.x + Q.y * Q.y) - (P.x * P.x + P.y * P.y);
     auto k2 = (R.x * R.x + R.y * R.y) - (P.x * P.x + P.y * P.y);
@@ -70,7 +74,7 @@ struct Circle {
 
     if (D < 0)
       return {};
-    else if (equals(D, 0)) {
+    else if (equals(D, (T)0)) {
       auto u = -b / (2 * a);
       auto x = P.x + u * (Q.x - P.x);
       auto y = P.y + u * (Q.y - P.y);
