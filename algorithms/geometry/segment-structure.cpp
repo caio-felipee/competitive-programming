@@ -3,20 +3,29 @@ class Segment {
  public:
   Point<T> A, B;
 
-    // Verifica se o ponto P da reta r que contém A e B  pertence ao segmento
-    bool contains(const Point<T>& P) const
-    {
-        return equals(A.x, B.x) ?  min(A.y, B.y) <= P.y and P.y <= max(A.y, B.y) 
-            : min(A.x, B.x) <= P.x and P.x <= max(A.x, B.x);
-    }
+  // Shamos Hoey
+    // Segment(const Point<T>& P, const Point<T>& Q)
+    //     : a(P.y - Q.y), b (Q.x - P.x), c(P.x*Q.y - Q.x*P.y), A(P), B(Q) { sweep_x = -1; }
 
-    // Esta abordagem não exige que P esteja sobre a reta AB
-    bool contains2(const Point<T>& P) const
-    {
-        double dAB = dist(A, B), dAP = dist(A, P), dPB = dist(P, B);
+    // bool operator<(const Segment& line) const
+    // {
+    //     return (-a*sweep_x - c)*line.b < (-line.a*sweep_x -line.c)*b;
+    // }
+    //
+    // static T sweep_x;
 
-        return equals(dAP + dPB, dAB);
-    }
+  // Verifica se o ponto P da reta r que contém A e B  pertence ao segmento
+  bool contains(const Point<T>& P) const {
+    return equals(A.x, B.x) ? min(A.y, B.y) <= P.y and P.y <= max(A.y, B.y)
+                            : min(A.x, B.x) <= P.x and P.x <= max(A.x, B.x);
+  }
+
+  // Esta abordagem não exige que P esteja sobre a reta AB
+  bool contains2(const Point<T>& P) const {
+    double dAB = dist(A, B), dAP = dist(A, P), dPB = dist(P, B);
+
+    return equals(dAP + dPB, dAB);
+  }
 
   bool intersect(const Segment<T>& s) const {
     auto d1 = D(A, B, s.A);
@@ -36,24 +45,22 @@ class Segment {
     bool fst = (d1 < 0 and d2 > 0) or (d1 > 0 and d2 < 0);
     bool snd = (d3 < 0 and d4 > 0) or (d3 > 0 and d4 < 0);
 
-    return fst and snd; 
+    return fst and snd;
   }
 
-    // Ponto mais próximo de P no segmento AB
-    Point<T> closest(const Point<T>& P)
-    {
-        Line<T> r(A, B);
-        auto Q = r.closest(P);
+  // Ponto mais próximo de P no segmento AB
+  Point<T> closest(const Point<T>& P) {
+    Line<T> r(A, B);
+    auto Q = r.closest(P);
 
-        if (this->contains(Q))
-            return Q;
+    if (this->contains(Q)) return Q;
 
-        auto distA = P.distanceTo(A);
-        auto distB = P.distanceTo(B);
+    auto distA = P.distanceTo(A);
+    auto distB = P.distanceTo(B);
 
-        if (distA <= distB)
-            return A;
-        else
-            return B;
-    }
+    if (distA <= distB)
+      return A;
+    else
+      return B;
+  }
 };
